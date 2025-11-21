@@ -9,7 +9,7 @@ jobs:
     name: CI
     environment: dev
     runs-on: ubuntu-latest
-steps:
+   steps:
       - name: Obtener código fuente
         uses: actions/checkout@v4
       - name: Obtener SHA corto
