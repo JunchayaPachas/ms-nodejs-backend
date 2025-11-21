@@ -9,22 +9,28 @@ jobs:
     name: CI
     environment: dev
     runs-on: ubuntu-latest
-   steps:
+    steps:
       - name: Obtener código fuente
         uses: actions/checkout@v4
+        
       - name: Obtener SHA corto
         id: short
         run: echo "short_sha=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT
+        
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
+          
       - name: Instalar dependencias
         run: npm install
+        
       - name: Ejecutar pruebas unitarias
         run: npm run test:unit
+        
       - name: Ejecutar pruebas de integración
         run: npm run test:integration
+        
       - name: Crear proyecto en SonarQube
         env:
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
@@ -43,10 +49,13 @@ jobs:
           else
             echo "El proyecto existe o la API devolvió el código $RESPONSE"
           fi
-      - uses: sonarsource/sonarqube-scan-action@master
+          
+      - name: Ejecutar análisis SonarQube
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          
       - name: Crear archivo ZIP del proyecto
         run: zip -r build-artifact.zip . -x "node_modules/*" ".git/*"
 
@@ -55,10 +64,11 @@ jobs:
         with:
           name: build-artifact
           path: build-artifact.zip
+          
       - name: Configurar credenciales de Registry de Imágenes
-
         run: |
           echo "[To-Do] Autenticar en Registry"
+          
       - name: Construir, etiquetar y subir imagen de Docker
         run: |
           echo "[To-Do] Generar imagen"
